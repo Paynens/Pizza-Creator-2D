@@ -2,10 +2,9 @@
 name: Build Pizza Creator 2D APK
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -30,18 +29,21 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Create Flutter project
+      - name: Create Flutter Android project
         run: flutter create --platforms=android --org com.pizzacreator build_app
 
-      - name: Get Flutter dependencies
+      - name: Install dependencies
         working-directory: build_app
         run: flutter pub get
 
-      - name: Build Android APK
+      - name: Copy game source
+        run: cp main.dart build_app/lib/main.dart
+
+      - name: Build release APK
         working-directory: build_app
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: pizza-creator-2d-apk
